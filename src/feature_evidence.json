@@ -1,0 +1,157 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-user-authentication-using-internet-identity-and-associate-all-stored-data-with-the-authenticated-user-principal-no-anonymous-persistence",
+      "featureTitle": "Implement user authentication using Internet Identity and associate all stored data with the authenticated user principal (no anonymous persistence).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/auth/AuthGate.tsx",
+        "frontend/src/components/auth/LoginButton.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-self-confrontation-loop-engine-ui-and-state-machine-with-the-specified-4-stages-and-branching-logic-including-the-ability-to-restart-the-loop-when-the-user-chooses-reconsider",
+      "featureTitle": "Implement the Self‑Confrontation Loop Engine UI and state machine with the specified 4 stages and branching logic, including the ability to restart the loop when the user chooses “Reconsider”.",
+      "files": [
+        "frontend/src/features/loop/LoopScreen.tsx",
+        "frontend/src/features/loop/stages/Stage1ActionDeclaration.tsx",
+        "frontend/src/features/loop/stages/Stage2FutureSelf.tsx",
+        "frontend/src/features/loop/stages/Stage3ForcedReflection.tsx",
+        "frontend/src/features/loop/types.ts",
+        "frontend/src/features/loop/useLoopMachine.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-past-decisions-screen-that-allows-the-user-to-view-their-saved-sessions-and-inspect-the-recorded-responses-and-final-decision-for-each-session",
+      "featureTitle": "Add a “Past Decisions” screen that allows the user to view their saved sessions and inspect the recorded responses and final decision for each session.",
+      "files": [
+        "frontend/src/features/history/PastDecisionsScreen.tsx",
+        "frontend/src/features/history/SessionDetailsScreen.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-an-analytics-dashboard-computed-from-the-user-s-stored-sessions-including-percentage-of-decisions-reconsidered-most-common-impulse-category-derived-from-user-provided-categorization-and-time-of-day-patterns",
+      "featureTitle": "Implement an analytics dashboard computed from the user’s stored sessions, including: percentage of decisions reconsidered, most common impulse category (derived from user-provided categorization), and time-of-day patterns.",
+      "files": [
+        "frontend/src/features/analytics/AnalyticsDashboardScreen.tsx",
+        "frontend/src/features/analytics/widgets/CategoryBreakdownCard.tsx",
+        "frontend/src/features/analytics/widgets/ReconsiderationRateCard.tsx",
+        "frontend/src/features/analytics/widgets/TimeOfDayPatternCard.tsx",
+        "frontend/src/features/loop/LoopScreen.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-the-stage-4-consequence-visualization-screen-as-a-split-view-showing-immediate-pleasure-vs-long-term-effect-with-slow-subtle-animations-and-minimal-text-and-provide-an-optional-heartbeat-ambient-sound-toggle",
+      "featureTitle": "Create the Stage 4 Consequence Visualization screen as a split view showing “Immediate pleasure” vs “Long-term effect” with slow, subtle animations and minimal text, and provide an optional heartbeat ambient sound toggle.",
+      "files": [
+        "frontend/src/features/loop/stages/Stage4ConsequenceVisualization.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-the-specified-ui-ux-design-direction-consistently-across-all-screens-matte-black-background-soft-white-text-single-accent-color-electric-blue-or-deep-crimson-glass-morphism-cards-large-spacing-calm-psychological-tone-fade-in-questions-and-a-slight-delay-before-buttons-become-clickable",
+      "featureTitle": "Apply the specified UI/UX design direction consistently across all screens: matte black background, soft white text, single accent color (electric blue or deep crimson), glass-morphism cards, large spacing, calm psychological tone, fade-in questions, and a slight delay before buttons become clickable.",
+      "files": [
+        "frontend/src/components/layout/GlassCard.tsx",
+        "frontend/src/components/ux/DelayedActionButton.tsx",
+        "frontend/src/components/ux/FadeIn.tsx",
+        "frontend/src/features/analytics/AnalyticsDashboardScreen.tsx",
+        "frontend/src/features/history/PastDecisionsScreen.tsx",
+        "frontend/src/features/loop/stages/Stage1ActionDeclaration.tsx",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-provide-a-clear-component-breakdown-and-route-page-structure-within-the-existing-react-typescript-template-including-dedicated-components-for-stage-prompts-branching-questions-session-summary-and-analytics-widgets",
+      "featureTitle": "Provide a clear component breakdown and route/page structure within the existing React + TypeScript template, including dedicated components for stage prompts, branching questions, session summary, and analytics widgets.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/MinimalNav.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

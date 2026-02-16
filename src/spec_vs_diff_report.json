@@ -1,0 +1,107 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T22:44:01.829Z",
+  "summary": "The diff adds a Motoko backend actor and a React/TanStack Router frontend implementing authentication gating, the loop UI (stages 1–4 plus completion), history screens, and an analytics dashboard. However, several requested behaviors are either not evidenced (due to truncation/omitted files) or appear missing/violated (stable-memory persistence, free-text category, and the “no notifications” constraint). Some extra/unrequested features (toast notifications, promotional footer, and custom access-control mixins) are also introduced.",
+  "missing_requirements": [
+    {
+      "id": "REQ-3",
+      "requirement": "Persist completed loop sessions in canister stable memory with an upgrade-safe data model, keyed by caller Principal; expose create and list methods; ensure sessions are sorted newest-first and isolated per user.",
+      "reason": "backend/main.mo shows an in-memory Map (completedSessions = Map.empty<Principal, SavedLoops>()) but no stable variables (e.g., stable var) or explicit upgrade-safe stable-memory strategy is evidenced in the truncated excerpt. A list-sessions method for the frontend’s useGetAllSessions is also not shown, nor any explicit sorting newest-first at the backend boundary.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/features/history/PastDecisionsScreen.tsx (uses useGetAllSessions, but backend list method not shown)"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Prompt the user to optionally assign an impulse category from a predefined list and/or a free-text category field, and store it with the session.",
+      "reason": "CompletionScreen provides only a predefined Select category (CATEGORIES) and no free-text category input is evidenced.",
+      "evidence": [
+        "frontend/src/features/loop/stages/CompletionScreen.tsx"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Stage 4 Consequence Visualization must include a visible sound control (default off) that plays/pauses a bundled heartbeat ambient audio file without backend calls.",
+      "reason": "Stage4ConsequenceVisualization is referenced but its implementation is not included in the provided diff summary excerpt, so the heartbeat toggle/audio behavior cannot be verified from evidence shown.",
+      "evidence": [
+        "frontend/src/features/loop/LoopScreen.tsx (references Stage4ConsequenceVisualization, implementation not shown)"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Selecting “No” in Stage 1 ends the session flow and returns to an idle/start screen; Stage 3 “Reconsider” returns to Stage 1 with the prior in-progress session discarded (not saved).",
+      "reason": "Stage1 and Stage3 UI components exist, but the actual state-machine transitions and the explicit 'No ends session/returns to idle' and 'Reconsider discards prior session' behaviors are implemented in useLoopMachine, which is not included in the diff summary excerpt.",
+      "evidence": [
+        "frontend/src/features/loop/LoopScreen.tsx (uses useLoopMachine; not shown)",
+        "frontend/src/features/loop/stages/Stage1ActionDeclaration.tsx",
+        "frontend/src/features/loop/stages/Stage3ForcedReflection.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Toast notification system and success/error toasts for saving sessions.",
+      "reason": "REQ-7 explicitly disallows notifications/distracting UI elements, but the app mounts a Toaster and uses toast.success/toast.error.",
+      "evidence": [
+        "frontend/src/App.tsx (Toaster)",
+        "frontend/src/features/loop/stages/CompletionScreen.tsx (toast.success / toast.error)"
+      ]
+    },
+    {
+      "description": "Promotional footer linking to caffeine.ai ('Built with love using caffeine.ai').",
+      "reason": "Not requested in any requirement and may conflict with the minimal/no-clutter, non-distracting UI direction.",
+      "evidence": [
+        "frontend/src/App.tsx (footer with caffeine.ai link)"
+      ]
+    },
+    {
+      "description": "Custom authorization/access-control mixin system in the backend (MixinAuthorization, AccessControl permissions).",
+      "reason": "The BuildRequest only specifies Internet Identity authentication and per-Principal scoping; it does not request a role/permission framework.",
+      "evidence": [
+        "backend/main.mo (imports MixinAuthorization and AccessControl; permission checks for #user)"
+      ]
+    }
+  ],
+  "confidence": 0.64,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/auth/AuthGate.tsx",
+    "frontend/src/components/auth/LoginButton.tsx",
+    "frontend/src/components/layout/GlassCard.tsx",
+    "frontend/src/components/layout/MinimalNav.tsx",
+    "frontend/src/components/ux/DelayedActionButton.tsx",
+    "frontend/src/components/ux/FadeIn.tsx",
+    "frontend/src/features/analytics/AnalyticsDashboardScreen.tsx",
+    "frontend/src/features/analytics/widgets/CategoryBreakdownCard.tsx",
+    "frontend/src/features/analytics/widgets/ReconsiderationRateCard.tsx",
+    "frontend/src/features/analytics/widgets/TimeOfDayPatternCard.tsx",
+    "frontend/src/features/history/PastDecisionsScreen.tsx",
+    "frontend/src/features/history/SessionDetailsScreen.tsx",
+    "frontend/src/features/loop/LoopScreen.tsx",
+    "frontend/src/features/loop/stages/CompletionScreen.tsx",
+    "frontend/src/features/loop/stages/IdleScreen.tsx",
+    "frontend/src/features/loop/stages/Stage1ActionDeclaration.tsx",
+    "frontend/src/features/loop/stages/Stage2FutureSelf.tsx",
+    "frontend/src/features/loop/stages/Stage3ForcedReflection.tsx",
+    "frontend/src/features/loop/stages/Stage3Gate.tsx",
+    "frontend/src/features/loop/stages/Stage4ConsequenceVisualization.tsx",
+    "frontend/src/features/loop/types.ts",
+    "frontend/src/features/loop/useLoopMachine.ts",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/utils.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

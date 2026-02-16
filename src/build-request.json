@@ -1,0 +1,189 @@
+{
+  "kind": "build_request",
+  "title": "Clarity: Self‑Confrontation Loop, accounts, history, analytics, and consequence visualization",
+  "projectName": "Clarity",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement user authentication using Internet Identity and associate all stored data with the authenticated user principal (no anonymous persistence).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "🔐 USER SYSTEM\nUsers can:\nCreate account\nView past decisions\nTrack patterns\nSee analytics dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can sign in and sign out using Internet Identity.",
+        "When signed out, the app does not allow saving or viewing decision history/analytics.",
+        "Backend stores a user record keyed by Principal and uses it to scope reads/writes to the current user only."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement the Self‑Confrontation Loop Engine UI and state machine with the specified 4 stages and branching logic, including the ability to restart the loop when the user chooses “Reconsider”.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "🧠 CORE FEATURE: SELF-CONFRONTATION LOOP ENGINE\nThe app must implement a multi-stage psychological loop:\n🌀 Stage 1 — Action Declaration\nUI: Full-screen minimal dark interface. Centered question:\n\"Do you want to do this?\"\nTwo buttons:\nYes\nNo\nIf No → End session. If Yes → Proceed.\n...\n🌀 Stage 3 — Forced Reflection Loop\n...\nButtons:\nContinue Anyway\nReconsider\nIf Continue: Ask:\n\"Accept the consequences knowingly?\"\nIf Reconsider: Redirect to Stage 1."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Stage 1 shows the question “Do you want to do this?” with “Yes” and “No”. Selecting “No” ends the session flow and returns to an idle/start screen.",
+        "Stage 2 asks “Is this right for your future self?”; if user answers “Yes”, it asks “Would you proudly tell someone you love about this choice?”; if user answers “No”, it asks “If this choice repeats for 5 years, where do you end up?” and requires a short typed response before continuing.",
+        "Stage 3 displays both reflections (“You said you want this.” and “You said it may not align with your future.”), then presents “Continue Anyway” and “Reconsider”.",
+        "If “Reconsider” is chosen in Stage 3, the flow returns to Stage 1 with the prior in-progress session discarded (not saved) unless the user explicitly chooses to save it (if such a prompt is added).",
+        "If “Continue Anyway” is chosen in Stage 3, the app asks “Accept the consequences knowingly?”; only after accepting does it proceed to Stage 4."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Persist completed loop sessions in the Motoko backend, including action title, all stage responses, final decision outcome, and timestamp; expose backend methods to create and list sessions for the authenticated user.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "📊 DATABASE STRUCTURE\nUser:\n...\nSession:\nuserId\nactionTitle\nstageResponses\nfinalDecision\ntimestamp",
+          "Generate:\n...Database schema\nAPI endpoints\nCore loop logic implementation"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend defines a stable, upgrade-safe data model for sessions keyed by the caller Principal.",
+        "Frontend saves a session only when the user reaches an explicit completion point (end session on “No”, or after Stage 4 / final acceptance).",
+        "Frontend can fetch and display the authenticated user’s list of past sessions sorted by timestamp (newest first).",
+        "No user can read or write sessions belonging to another principal."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add a “Past Decisions” screen that allows the user to view their saved sessions and inspect the recorded responses and final decision for each session.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Users can:\n...View past decisions"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Past Decisions screen lists sessions with at least: timestamp, actionTitle, and finalDecision summary.",
+        "Selecting a session shows the stage responses captured during the loop (including typed reflection when applicable).",
+        "UI maintains the app’s minimal/no-clutter style and avoids distracting UI elements."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement an analytics dashboard computed from the user’s stored sessions, including: percentage of decisions reconsidered, most common impulse category (derived from user-provided categorization), and time-of-day patterns.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "See analytics dashboard:\n% of decisions reconsidered\nMost common impulse category\nTime of day patterns"
+        ]
+      },
+      "acceptanceCriteria": [
+        "During or after completing a session, the user is prompted to optionally assign an “impulse category” from a small predefined list and/or a free-text category field, which is stored with the session.",
+        "Dashboard displays: (1) % of sessions where the user chose “Reconsider” at least once before finalizing, (2) most common category based on stored session categories, and (3) a time-of-day breakdown (e.g., morning/afternoon/evening/night counts or a simple hourly histogram).",
+        "Analytics are computed for the current authenticated user only and update correctly when new sessions are saved."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Create the Stage 4 Consequence Visualization screen as a split view showing “Immediate pleasure” vs “Long-term effect” with slow, subtle animations and minimal text, and provide an optional heartbeat ambient sound toggle.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "🌀 Stage 4 — Consequence Visualization\nIf Continue: Display animated branching outcome simulation:\nLeft screen: Immediate pleasure.\nRight screen: Long-term effect.\nMinimal text. Heavy emotional weight. Subtle sound design.",
+          "Subtle heartbeat ambient sound (optional)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Stage 4 renders a left and right panel with distinct, subdued motion/animation to suggest branching outcomes, with minimal text labels “Immediate pleasure.” and “Long-term effect.”",
+        "Animations are slow (no rapid motion), and UI does not feel game-like or busy.",
+        "A visible sound control exists (default off) that plays/pauses a bundled heartbeat ambient audio file without requiring any backend calls."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Apply the specified UI/UX design direction consistently across all screens: matte black background, soft white text, single accent color (electric blue or deep crimson), glass-morphism cards, large spacing, calm psychological tone, fade-in questions, and a slight delay before buttons become clickable.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "🎨 UI DESIGN DIRECTION\nTheme:\nMatte black background\nSoft white text\nSingle accent color (electric blue or deep crimson)\nGlass morphism cards\nVery slow transitions\nTypography:\nInter or Neue Montreal\nLarge spacing\nCalm, psychological tone\nAnimations:\nFade-in questions\nSlight delay before buttons activate",
+          "🧩 UX FLOW REQUIREMENTS\nNo clutter\nNo notifications\nNo distractions\nNo ads\nSilence as a design element\nThe app should feel like:\nA quiet room with a mirror."
+        ]
+      },
+      "acceptanceCriteria": [
+        "All main screens (loop stages, history, analytics) use a consistent matte-black theme with soft white typography and exactly one accent color applied consistently.",
+        "Questions fade in and primary action buttons are disabled briefly (e.g., ~500–1200ms) before enabling to encourage pausing.",
+        "No notifications, ads, or distracting UI elements are introduced; layouts remain sparse and centered."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Provide a clear component breakdown and route/page structure within the existing React + TypeScript template, including dedicated components for stage prompts, branching questions, session summary, and analytics widgets.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "📦 DELIVERABLE REQUIREMENTS\nGenerate:\nFull folder structure\nComponent breakdown\n...UI layout structure"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Codebase has a readable component structure separating loop flow, history, and analytics UI concerns.",
+        "Loop stages are implemented as composable components (not one monolith file), with shared prompt/button components to enforce consistent styling and timing behavior.",
+        "The application has a clear navigation model to reach: Loop, Past Decisions, and Analytics (navigation remains minimal and non-distracting)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Use the pre-injected React + TypeScript + Tailwind + React Query frontend template (no Next.js App Router).",
+    "Backend must be a single Motoko actor in backend/main.mo (no Node/Express).",
+    "Authentication must use Internet Identity (no JWT, no email/password auth).",
+    "Do not use external databases (no MongoDB); persist data in canister stable memory.",
+    "Do not modify files under frontend/src/components/ui or other paths marked immutable by the system context; compose those components instead.",
+    "Use English for any user-facing text."
+  ],
+  "nonGoals": [
+    "OpenAI-powered dynamic prompts and AI pattern detection/warnings (explicitly out of scope for this build).",
+    "Stripe or any premium payments implementation (placeholder not required).",
+    "Real-time features, push notifications, email/SMS, or any third-party auth providers other than Internet Identity.",
+    "High-fidelity 3D or complex simulations; Stage 4 visualization should be simple, subtle, and CSS-based."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Minimal abstract mirror/glass texture background (clarity-bg.dim_1920x1080.png)",
+      "Simple monochrome app mark/logo with a mirror motif (clarity-logo.dim_512x512.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Build “Clarity”, a psychological decision-intervention web app that guides users through a structured Self‑Confrontation Loop to create mental clarity via reflection (non-judgmental), with a minimal dark UI, consequence visualization, and user accounts with history + analytics.",
+  "architectural_notes": [
+    "Frontend: Next.js 14 (App Router) + TypeScript + TailwindCSS + Framer Motion + Zustand.",
+    "Backend: Node.js with either Express or Next.js API routes; MongoDB for sessions/reflection data; JWT auth.",
+    "Core UX principle: no clutter/notifications/ads; silence as design element; app should feel like a quiet room with a mirror.",
+    "Core data entities: User (email/password/createdAt), Session (userId/actionTitle/stageResponses/finalDecision/timestamp), ReflectionPattern (userId/recurringCategory/riskScore).",
+    "Self‑Confrontation Loop stages: Action Declaration → Alignment Interrogation → Forced Reflection Loop → Consequence Visualization."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Minimal abstract mirror/glass texture background (clarity-bg.dim_1920x1080.png)\n- Simple monochrome app mark/logo with a mirror motif (clarity-logo.dim_512x512.png)",
+  "existing_features": [
+    {
+      "id": "feature-implement-user-authentication-using-internet-identity-and-associate-all-stored-data-with-the-authenticated-user-principal-no-anonymous-persistence",
+      "title": "Implement user authentication using Internet Identity and associate all stored data with the authenticated user principal (no anonymous persistence).",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-self-confrontation-loop-engine-ui-and-state-machine-with-the-specified-4-stages-and-branching-logic-including-the-ability-to-restart-the-loop-when-the-user-chooses-reconsider",
+      "title": "Implement the Self‑Confrontation Loop Engine UI and state machine with the specified 4 stages and branching logic, including the ability to restart the loop when the user chooses “Reconsider”.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-past-decisions-screen-that-allows-the-user-to-view-their-saved-sessions-and-inspect-the-recorded-responses-and-final-decision-for-each-session",
+      "title": "Add a “Past Decisions” screen that allows the user to view their saved sessions and inspect the recorded responses and final decision for each session.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-analytics-dashboard-computed-from-the-user-s-stored-sessions-including-percentage-of-decisions-reconsidered-most-common-impulse-category-derived-from-user-provided-categorization-and-time-of-day-patterns",
+      "title": "Implement an analytics dashboard computed from the user’s stored sessions, including: percentage of decisions reconsidered, most common impulse category (derived from user-provided categorization), and time-of-day patterns.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-the-stage-4-consequence-visualization-screen-as-a-split-view-showing-immediate-pleasure-vs-long-term-effect-with-slow-subtle-animations-and-minimal-text-and-provide-an-optional-heartbeat-ambient-sound-toggle",
+      "title": "Create the Stage 4 Consequence Visualization screen as a split view showing “Immediate pleasure” vs “Long-term effect” with slow, subtle animations and minimal text, and provide an optional heartbeat ambient sound toggle.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-specified-ui-ux-design-direction-consistently-across-all-screens-matte-black-background-soft-white-text-single-accent-color-electric-blue-or-deep-crimson-glass-morphism-cards-large-spacing-calm-psychological-tone-fade-in-questions-and-a-slight-delay-before-buttons-become-clickable",
+      "title": "Apply the specified UI/UX design direction consistently across all screens: matte black background, soft white text, single accent color (electric blue or deep crimson), glass-morphism cards, large spacing, calm psychological tone, fade-in questions, and a slight delay before buttons become clickable.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-a-clear-component-breakdown-and-route-page-structure-within-the-existing-react-typescript-template-including-dedicated-components-for-stage-prompts-branching-questions-session-summary-and-analytics-widgets",
+      "title": "Provide a clear component breakdown and route/page structure within the existing React + TypeScript template, including dedicated components for stage prompts, branching questions, session summary, and analytics widgets.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Implement Self‑Confrontation Loop Engine (Stages 1–4) with branching logic and ability to restart loop",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Create minimalist dark UI/UX (full-screen prompts, glassmorphism cards, slow transitions, accent color) with Framer Motion animations and optional ambient sound",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Consequence Visualization screen showing immediate vs long-term branching outcomes after user continues knowingly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "User authentication system (account creation/login) using JWT",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Decision/session persistence: store action title, stage responses, final decision, timestamp in MongoDB; allow viewing past decisions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Patterns & analytics dashboard (e.g., % reconsidered, common impulse category, time-of-day patterns) using stored session data",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Backend API layer (Next.js API routes or Express) for sessions, users, analytics, and patterns",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Optional: OpenAI-powered dynamic introspective prompts and AI pattern detection/warnings",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Future premium features foundation (Stripe integration placeholder)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Persist completed loop sessions in the Motoko backend, including action title, all stage responses, final decision outcome, and timestamp; expose backend methods to create and list sessions for the authenticated user.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Clarity",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

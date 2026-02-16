@@ -1,0 +1,280 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Clarity — Loop flow, auth gating, history, analytics, and consequence visualization (frontend-only)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Add Internet Identity sign-in/sign-out and gate all history/analytics/session persistence behind authentication.",
+      "acceptanceCriteria": [
+        "User can sign in and sign out using Internet Identity.",
+        "When signed out, the app does not allow saving or viewing decision history/analytics."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/LoginButton.tsx",
+          "operation": "create",
+          "description": "Create a minimal Login/Logout button using the existing Internet Identity hook; on logout clear React Query cache to remove user-scoped data. Use the selected \"authorization\" component guidance for login/logout behavior; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/AuthGate.tsx",
+          "operation": "create",
+          "description": "Create an auth gate wrapper that blocks app data screens when unauthenticated and renders a calm sign-in prompt instead (no anonymous persistence). Use the selected \"authorization\" component guidance for access-denied UI patterns; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useAuthedActor.ts",
+          "operation": "create",
+          "description": "Create a small helper hook that composes the existing useActor + useInternetIdentity to expose isAuthenticated and a safe actor reference for authenticated-only queries/mutations (prevents accidental reads/writes when signed out)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Implement the top-level app shell that includes LoginButton and wraps authenticated routes with AuthGate so signed-out users cannot view or save sessions/history/analytics."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Implement the Self‑Confrontation Loop Engine UI + state machine with 4 stages, branching logic, and restart-on-Reconsider behavior.",
+      "acceptanceCriteria": [
+        "Stage 1 shows the question “Do you want to do this?” with “Yes” and “No”. Selecting “No” ends the session flow and returns to an idle/start screen.",
+        "Stage 2 asks “Is this right for your future self?”; if user answers “Yes”, it asks “Would you proudly tell someone you love about this choice?”; if user answers “No”, it asks “If this choice repeats for 5 years, where do you end up?” and requires a short typed response before continuing.",
+        "Stage 3 displays both reflections (“You said you want this.” and “You said it may not align with your future.”), then presents “Continue Anyway” and “Reconsider”.",
+        "If “Reconsider” is chosen in Stage 3, the flow returns to Stage 1 with the prior in-progress session discarded (not saved) unless the user explicitly chooses to save it (if such a prompt is added).",
+        "If “Continue Anyway” is chosen in Stage 3, the app asks “Accept the consequences knowingly?”; only after accepting does it proceed to Stage 4."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/loop/types.ts",
+          "operation": "create",
+          "description": "Define frontend-only types for loop stages, branching answers, and an in-progress session model that can be converted into the backend StageResponse/CompletedSession inputs."
+        },
+        {
+          "path": "frontend/src/features/loop/useLoopMachine.ts",
+          "operation": "create",
+          "description": "Implement the loop state machine for Stages 1–4 with explicit transitions, branching prompts, and a restart action that discards in-progress state when the user chooses Reconsider."
+        },
+        {
+          "path": "frontend/src/features/loop/LoopScreen.tsx",
+          "operation": "create",
+          "description": "Create the main Loop screen that renders the appropriate stage view from the state machine, includes the idle/start screen, and coordinates completion behavior (including ending on Stage 1 “No”)."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage1ActionDeclaration.tsx",
+          "operation": "create",
+          "description": "Implement Stage 1 full-screen prompt “Do you want to do this?” with Yes/No actions wired into the loop machine and the required idle return on No."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage2FutureSelf.tsx",
+          "operation": "create",
+          "description": "Implement Stage 2 branching prompts, including the typed-response requirement when the user answers “No” to the future-self question."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage3ForcedReflection.tsx",
+          "operation": "create",
+          "description": "Implement Stage 3 summary reflections + Continue Anyway / Reconsider buttons; Reconsider must reset back to Stage 1 and discard unsaved progress."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage4Gate.tsx",
+          "operation": "create",
+          "description": "Implement the “Accept the consequences knowingly?” confirmation gate that must be accepted before navigating to Stage 4 consequence visualization."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add a Past Decisions screen to list and inspect saved sessions and their stage responses.",
+      "acceptanceCriteria": [
+        "Past Decisions screen lists sessions with at least: timestamp, actionTitle, and finalDecision summary.",
+        "Selecting a session shows the stage responses captured during the loop (including typed reflection when applicable).",
+        "UI maintains the app’s minimal/no-clutter style and avoids distracting UI elements."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/history/PastDecisionsScreen.tsx",
+          "operation": "create",
+          "description": "Create the Past Decisions screen that fetches the authenticated user’s sessions via the backend actor, sorts by timestamp (newest first), and renders a sparse list view."
+        },
+        {
+          "path": "frontend/src/features/history/SessionDetailsScreen.tsx",
+          "operation": "create",
+          "description": "Create a session details view that displays action title, outcome/finalDecision, timestamp, and the captured stageResponses including any typed reflections."
+        },
+        {
+          "path": "frontend/src/features/history/queries.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for fetching sessions for the current authenticated user and for selecting an individual session from the cached list."
+        },
+        {
+          "path": "frontend/src/routes.tsx",
+          "operation": "create",
+          "description": "Register routes for Past Decisions and Session Details screens and ensure they are reachable via minimal navigation (no orphan views)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add analytics dashboard and session category prompting, with time-of-day patterns computed from stored sessions.",
+      "acceptanceCriteria": [
+        "During or after completing a session, the user is prompted to optionally assign an “impulse category” from a small predefined list and/or a free-text category field, which is stored with the session.",
+        "Dashboard displays: (1) % of sessions where the user chose “Reconsider” at least once before finalizing, (2) most common category based on stored session categories, and (3) a time-of-day breakdown (e.g., morning/afternoon/evening/night counts or a simple hourly histogram).",
+        "Analytics are computed for the current authenticated user only and update correctly when new sessions are saved."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/loop/components/CategoryPrompt.tsx",
+          "operation": "create",
+          "description": "Add a minimal prompt shown at session completion to optionally capture impulse category (predefined list + optional free-text) and attach it to the session data sent to the backend."
+        },
+        {
+          "path": "frontend/src/features/loop/useSaveCompletedSession.ts",
+          "operation": "create",
+          "description": "Create a React Query mutation hook to save a completed session via the backend actor only when the loop reaches a completion point, and invalidate session/analytics queries so the dashboard updates."
+        },
+        {
+          "path": "frontend/src/features/analytics/AnalyticsDashboardScreen.tsx",
+          "operation": "create",
+          "description": "Create the Analytics Dashboard screen that reads user-scoped analytics (reconsideration rate, category analysis) from the backend actor and supplements it with time-of-day analysis computed from the user’s fetched sessions."
+        },
+        {
+          "path": "frontend/src/features/analytics/widgets/ReconsiderationRateCard.tsx",
+          "operation": "create",
+          "description": "Add a small widget/card for displaying reconsideration percentage in the app’s minimal style."
+        },
+        {
+          "path": "frontend/src/features/analytics/widgets/CategoryBreakdownCard.tsx",
+          "operation": "create",
+          "description": "Add a small widget/card for most common impulse category; use the backend-provided category results where available and fall back to session-derived category strings when appropriate."
+        },
+        {
+          "path": "frontend/src/features/analytics/widgets/TimeOfDayPatternCard.tsx",
+          "operation": "create",
+          "description": "Add a small widget/card showing time-of-day counts (e.g., morning/afternoon/evening/night) derived from session timestamps for the current user only."
+        },
+        {
+          "path": "frontend/src/features/analytics/queries.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for fetching analytics data from the backend actor and for fetching sessions needed to compute time-of-day patterns."
+        },
+        {
+          "path": "frontend/src/routes.tsx",
+          "operation": "modify",
+          "description": "Add a route for the Analytics Dashboard screen and wire it into the minimal navigation so it is reachable."
+        },
+        {
+          "path": "frontend/src/features/loop/LoopScreen.tsx",
+          "operation": "modify",
+          "description": "Wire session completion to show CategoryPrompt (optional) and then call the save mutation; ensure saving is blocked when unauthenticated."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Implement Stage 4 Consequence Visualization split view with slow animations and a heartbeat ambient sound toggle (default off).",
+      "acceptanceCriteria": [
+        "Stage 4 renders a left and right panel with distinct, subdued motion/animation to suggest branching outcomes, with minimal text labels “Immediate pleasure.” and “Long-term effect.”",
+        "Animations are slow (no rapid motion), and UI does not feel game-like or busy.",
+        "A visible sound control exists (default off) that plays/pauses a bundled heartbeat ambient audio file without requiring any backend calls."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/audio/heartbeat.mp3",
+          "operation": "create",
+          "description": "Add a bundled heartbeat ambient audio asset used by the Stage 4 sound toggle (kept fully client-side)."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage4ConsequenceVisualization.tsx",
+          "operation": "create",
+          "description": "Implement Stage 4 split view (“Immediate pleasure.” vs “Long-term effect.”) with subtle slow CSS-based motion and a default-off sound toggle that plays/pauses the bundled heartbeat audio."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage4Gate.tsx",
+          "operation": "modify",
+          "description": "After acceptance, navigate/transition into the Stage 4 consequence visualization screen in the loop flow."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Apply consistent matte-black, calm glass-morphism styling with fade-in prompts and delayed button activation across all screens.",
+      "acceptanceCriteria": [
+        "All main screens (loop stages, history, analytics) use a consistent matte-black theme with soft white typography and exactly one accent color applied consistently.",
+        "Questions fade in and primary action buttons are disabled briefly (e.g., ~500–1200ms) before enabling to encourage pausing.",
+        "No notifications, ads, or distracting UI elements are introduced; layouts remain sparse and centered."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Create/extend global Tailwind base styles for matte-black background, soft white text, a single accent color via CSS variables, and reusable utilities for glass-morphism cards and slow fade-in transitions."
+        },
+        {
+          "path": "frontend/src/components/ux/FadeIn.tsx",
+          "operation": "create",
+          "description": "Create a small wrapper component that applies the standard slow fade-in behavior for questions and key text across screens."
+        },
+        {
+          "path": "frontend/src/components/ux/DelayedActionButton.tsx",
+          "operation": "create",
+          "description": "Create a shared button wrapper that introduces a slight delay before enabling click actions to encourage pausing (used throughout loop stages and confirmations)."
+        },
+        {
+          "path": "frontend/src/components/layout/GlassCard.tsx",
+          "operation": "create",
+          "description": "Create a reusable glass-morphism card container component to keep the UI sparse and consistent across Loop, History, and Analytics."
+        },
+        {
+          "path": "frontend/src/features/loop/stages/Stage1ActionDeclaration.tsx",
+          "operation": "modify",
+          "description": "Adopt FadeIn + DelayedActionButton + GlassCard to match the calm, minimal design direction and enforce consistent interaction timing."
+        },
+        {
+          "path": "frontend/src/features/history/PastDecisionsScreen.tsx",
+          "operation": "modify",
+          "description": "Apply the global theme and shared UI primitives (FadeIn, GlassCard, DelayedActionButton where applicable) to keep the history UI minimal and consistent."
+        },
+        {
+          "path": "frontend/src/features/analytics/AnalyticsDashboardScreen.tsx",
+          "operation": "modify",
+          "description": "Apply the global theme and shared UI primitives to keep the analytics UI sparse, centered, and non-distracting."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Define a clear React + TypeScript component and route structure for Loop, Past Decisions, and Analytics with composable stage/components.",
+      "acceptanceCriteria": [
+        "Codebase has a readable component structure separating loop flow, history, and analytics UI concerns.",
+        "Loop stages are implemented as composable components (not one monolith file), with shared prompt/button components to enforce consistent styling and timing behavior.",
+        "The application has a clear navigation model to reach: Loop, Past Decisions, and Analytics (navigation remains minimal and non-distracting)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/routes.tsx",
+          "operation": "modify",
+          "description": "Finalize the app’s route/page structure to include Loop, Past Decisions, and Analytics, plus a default route that lands the user on the Loop screen after sign-in."
+        },
+        {
+          "path": "frontend/src/components/layout/MinimalNav.tsx",
+          "operation": "create",
+          "description": "Create a minimal navigation component (sparse links/buttons) for authenticated users to switch between Loop, Past Decisions, and Analytics without clutter."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the router and MinimalNav into the app shell, ensure all navigable views are registered and reachable, and integrate the generated brand assets into the layout."
+        },
+        {
+          "path": "frontend/public/assets/generated/clarity-bg.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the generated background image asset and reference it from the app shell/layout as a subtle backdrop (no backend)."
+        },
+        {
+          "path": "frontend/public/assets/generated/clarity-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated logo asset and reference it from the app shell/navigation as the app mark."
+        }
+      ]
+    }
+  ]
+}
